@@ -1,16 +1,22 @@
 require 'rails_helper'
 
-feature "Interaction with Questions" do
+feature "View All Questions", %(
+  As a user
+  I want to view recently posted questions
+  So that I can help others
 
-  pending "View All Questions", %(
-    As a user
-    I want to view recently posted questions
-    So that I can help others
+  Acceptance Criteria
+  [ ] I must see the title of each question
+  [ ] I must see questions listed in order, most recently posted first
+) do
 
-    Acceptance Criteria
-    [ ] I must see the title of each question
-    [ ] I must see questions listed in order, most recently posted first
-    )
+  scenario "Navigate to questions from root" do
+    visit '/'
+
+    expect(page).to have_content "Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?"
+  end
+
+end
 
   pending "View a Question's Details", %(
     As a user
