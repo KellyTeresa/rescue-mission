@@ -1,12 +1,17 @@
-<h1>Submit a New Question</h1>
+<div class="row">
+  <div class="large-12">
 
-<%= form_for @question do |f| %>
-  <%= f.label :title %>
-  <%= f.text_field :title %>
+    <h1>Submit a New Question</h1>
 
-  <%= f.label :description %>
-  <%= f.text_area :description %>
+    <%= form_for @question do |f| %>
+      <%= f.label :title %>
+      <%= f.text_field :title %>
 
-  <%= f.submit "Submit Question"%>
+      <%= f.label :description %>
+      <%= f.text_area :description %>
 
-<%- end -%>
+      <%= f.submit "Submit Question"%>
+    <%- end -%>
+
+  </div>
+</div>

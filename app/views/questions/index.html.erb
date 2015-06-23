@@ -2,12 +2,13 @@
   <div class="large-12">
 
     <h1>Questions!</h1>
-
+    <h3><%= link_to "Ask a Question", new_question_path %></h3>
     <ul>
       <% @questions.each do |question| %>
         <li><%= link_to "#{question.title}", question_path(question) %></li>
       <%- end -%>
     </ul>
+
 
   </div>
 </div>

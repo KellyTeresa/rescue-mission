@@ -51,25 +51,25 @@ feature "Post a question" do
   ) do
     question = FactoryGirl.build(:question)
 
-    visit new_question_path
+    visit '/'
+    click_link "Ask a Question"
     fill_in("Title", with: question.title)
     fill_in("Description", with: question.description)
     click_button "Submit Question"
 
     expect(page).to have_content(question.title)
     expect(page).to have_content(question.description)
+    # add this back when styling is working
     # expect(page).to have_content("Question submitted!")
   end
 
   pending "Invalid Question", %(
     [ ] I must be presented with errors if I fill out the form incorrectly
     )
+    # add this when styling is working
 end
 
 feature "Pending Features" do
-
-
-
 
   pending "Answering a Question", %(
     As a user
