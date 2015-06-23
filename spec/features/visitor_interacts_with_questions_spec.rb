@@ -6,31 +6,41 @@ feature "View All Questions", %(
   So that I can help others
 
   Acceptance Criteria
-  [ ] I must see the title of each question
-  [ ] I must see questions listed in order, most recently posted first
+  [X] I must see the title of each question
+  [X] I must see questions listed in order, most recently posted first
 ) do
 
   scenario "Navigate to questions from root" do
     visit '/'
 
-    expect(page).to have_content "Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?"
+    expect(page).to have_content("Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?")
   end
 
 end
 
-  pending "View a Question's Details", %(
-    As a user
-    I want to view a question's details
-    So that I can effectively understand the question
+feature "View a Question's Details", %(
+  As a user
+  I want to view a question's details
+  So that I can effectively understand the question
 
-    Acceptance Criteria
-    [ ] I must be able to get to this page from the questions index
-    [ ] I must see the question's title
-    [ ] I must see the question's description
-    )
+  Acceptance Criteria
+  [ ] I must be able to get to this page from the questions index
+  [ ] I must see the question's title
+  [ ] I must see the question's description
+) do
 
+  scenario "Click on first question" do
+    visit '/'
+    click_link "Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?"
 
-  pending "Post a Valid Question", %(
+    expect(page).to have_content("Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?")
+    expect(page).to have_content("Candy canes soufflé tootsie roll tart danish cupcake chocolate bar.")
+    expect(current_path).to eq(question_path(5))
+  end
+end
+
+feature "Post a question" do
+  scenario "Valid Question", %(
     As a user
     I want to post a question
     So that I can receive help from others
@@ -38,11 +48,28 @@ end
     Acceptance Criteria
     [ ] I must provide a title that is at least 40 characters long
     [ ] I must provide a description that is at least 150 characters long
-    )
+  ) do
+    question = FactoryGirl.build(:question)
 
-  pending "Post an Invalid Question", %(
+    visit new_question_path
+    fill_in("Title", with: question.title)
+    fill_in("Description", with: question.description)
+    click_button "Submit Question"
+
+    expect(page).to have_content(question.title)
+    expect(page).to have_content(question.description)
+    # expect(page).to have_content("Question submitted!")
+  end
+
+  pending "Invalid Question", %(
     [ ] I must be presented with errors if I fill out the form incorrectly
     )
+end
+
+feature "Pending Features" do
+
+
+
 
   pending "Answering a Question", %(
     As a user
@@ -90,5 +117,4 @@ end
     [ ] I must be able delete a question from the question details page
     [ ] All answers associated with the question must also be deleted
     )
-
 end
