@@ -1,4 +1,4 @@
-class AnswersController < ActionController::Base
+class AnswersController < ApplicationController
   def index
     @question = Question.find(params[:question_id])
     @answers = @question.answers
@@ -16,12 +16,13 @@ class AnswersController < ActionController::Base
       flash[:notice] = 'Answer submitted!'
       redirect_to question_path(@question)
     else
+      flash[:error] = "Invalid input"
       render :new
     end
   end
 
   private
   def answer_params
-    params.require(:answer).permit(:description)
+    params.require(:answer).permit(:description, :question_id)
   end
 end
