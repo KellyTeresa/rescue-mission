@@ -8,7 +8,7 @@ FactoryGirl.define do
   end
 
   factory :answer do
-    question_id 1
+    question_id nil
     description Faker::Lorem.paragraph(5)
   end
 
