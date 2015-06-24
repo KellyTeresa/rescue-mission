@@ -12,13 +12,13 @@
     <% else %>
       <ul>
         <% @answers.each do |answer| %>
-          <%= answer.description %>
+          <li><%= answer.description %></li>
         <%- end -%>
       </ul>
     <%- end -%>
     <h3>Submit Answer</h3>
 
-    <%= render 'answers/form', object: @answer = Answer.new%>
+    <%= render 'answers/form' %>
 
 
   </div>

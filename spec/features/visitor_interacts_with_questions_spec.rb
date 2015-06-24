@@ -90,7 +90,7 @@ feature "Answering a Question" do
     answer = FactoryGirl.build(:answer)
     visit '/'
     click_link question.title
-    fill_in("Description", with: answer.description)
+    fill_in("Explanation", with: answer.description)
     click_button "Add Answer"
 
     expect(page).to have_content(question.title)
