@@ -90,7 +90,6 @@ feature "Answering a Question" do
     answer = FactoryGirl.build(:answer)
     visit '/'
     click_link question.title
-    click_link "Submit Answer"
     fill_in("Description", with: answer.description)
     click_button "Add Answer"
 
@@ -106,7 +105,6 @@ feature "Answering a Question" do
       question = FactoryGirl.create(:question)
       visit '/'
       click_link question.title
-      click_link "Submit Answer"
       click_button "Add Answer"
 
       expect(page).to have_content "Invalid input"
