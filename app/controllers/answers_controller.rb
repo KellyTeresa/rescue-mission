@@ -12,7 +12,8 @@ class AnswersController < ApplicationController
   def create
     @question = Question.find(params[:question_id])
     @answer = Answer.new(answer_params)
-    @answer.question_id = @question.id
+    @answer.question = @question
+    @answer.user = current_user
     if @answer.save
       flash[:notice] = 'Answer submitted!'
       redirect_to question_path(@question)
@@ -21,7 +22,14 @@ class AnswersController < ApplicationController
       render :new
     end
   end
-  
+
+  def edit
+    @answer = Answer.find(params[:id])
+    @answer.accepted = true
+    @answer.save
+    redirect_to question_path(@answer.question)
+  end
+
   private
   def answer_params
     params.require(:answer).permit(:description)

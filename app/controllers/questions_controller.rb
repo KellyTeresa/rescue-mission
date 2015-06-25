@@ -5,7 +5,8 @@ class QuestionsController < ApplicationController
 
   def show
     @question = Question.find(params[:id])
-    @answers = Answer.where(question: @question).order(created_at: :asc)
+    @best_answer = Answer.where(question: @question).find_by(accepted: true)
+    @answers = Answer.where(question: @question).where(accepted: false).order(created_at: :asc)
     @answer = Answer.new
   end
 
@@ -15,6 +16,7 @@ class QuestionsController < ApplicationController
 
   def create
     @question = Question.new(question_params)
+    @question.user = current_user
     if @question.save
       flash[:notice] = 'Question submitted!'
       redirect_to question_path(@question)

@@ -1,5 +1,13 @@
 require 'rails_helper'
 
+def login
+  user = FactoryGirl.create(:user)
+  visit new_user_session_path
+  fill_in 'Email', with: user.email
+  fill_in 'Password', with: user.password
+  click_button 'Log in'
+end
+
 feature "View All Questions", %(
   As a user
   I want to view recently posted questions
@@ -11,6 +19,7 @@ feature "View All Questions", %(
 ) do
 
   scenario "Navigate to questions from root" do
+    login
     question = FactoryGirl.create(:question)
     visit '/'
 
@@ -31,6 +40,7 @@ feature "View a Question's Details", %(
 ) do
 
   scenario "Click on first question" do
+    login
     question = FactoryGirl.create(:question)
     visit '/'
     click_link question.title
@@ -51,6 +61,7 @@ feature "Post a question" do
     [X] I must provide a title that is at least 40 characters long
     [X] I must provide a description that is at least 150 characters long
   ) do
+    login
     question = FactoryGirl.build(:question)
 
     visit '/'
@@ -67,6 +78,7 @@ feature "Post a question" do
   scenario "Invalid Question", %(
     [X] I must be presented with errors if I fill out the form incorrectly
     ) do
+      login
       visit '/'
       click_link "Ask a Question"
       fill_in("Title", with: "Fish")
@@ -86,6 +98,7 @@ feature "Answering a Question" do
     [X] I must be on the question detail page
     [X] I must provide a description that is at least 50 characters long
   ) do
+    login
     question = FactoryGirl.create(:question)
     answer = FactoryGirl.build(:answer)
     visit '/'
@@ -102,6 +115,7 @@ feature "Answering a Question" do
   scenario "Incorrectly filling out answer form", %(
     [X] I must be presented with errors if I fill out the form incorrectly
     ) do
+      login
       question = FactoryGirl.create(:question)
       visit '/'
       click_link question.title
@@ -122,6 +136,7 @@ feature "Editing a Question" do
     [X] I must be able to get to the edit page from the question details page
 
   ) do
+    login
     question = FactoryGirl.create(:question)
     edited_info = FactoryGirl.build(:question)
     visit '/'
@@ -138,11 +153,12 @@ feature "Editing a Question" do
   scenario "not valid information", %(
     [X] I must be presented with errors if I fill out the form incorrectly
   ) do
+    login
     question = FactoryGirl.create(:question)
     visit '/'
     click_link question.title
     click_link "Edit Question"
-    fill_in("Title", with: "Fish")
+    fill_in("Title", with: "F")
     click_button "Submit Question"
 
     expect(page).to have_content "Invalid input"
@@ -162,19 +178,20 @@ feature "Viewing a Question's Answers" do
     [X] I must only see answers to the question I'm viewing
     [X] I must see all answers listed in order, most recent last
   ) do
-    question = FactoryGirl.create(:question)
+    login
+    @question = FactoryGirl.create(:question)
     answers = []
     5.times do
       answer = FactoryGirl.build(:answer)
-      answer.question_id = question.id
+      answer.question = @question
       answer.save
       answers << answer
     end
-    other_answer = Answer.create(question_id: 300, description: "Fruitcake apple pie muffin cupcake lollipop croissant wafer carrot cake powder. Jelly soufflé candy chocolate cake tootsie roll tiramisu sweet roll gummi bears topping. Chupa chups pudding chocolate ice cream brownie biscuit cookie cotton candy.")
+    other_answer = Answer.create(question_id: 300, description: "Fruitcake apple pie muffin cupcake lollipop croissant wafer carrot cake powder.", user: FactoryGirl.create(:user))
 
 
     visit '/'
-    click_link question.title
+    click_link @question.title
 
     expect(page).to have_content(answers[0].description)
     expect(page).to have_content(answers[1].description)
@@ -182,7 +199,7 @@ feature "Viewing a Question's Answers" do
     expect(page).to have_content(answers[3].description)
     expect(page).to have_content(answers[4].description)
     expect(page).to_not have_content(other_answer.description)
-    expect(current_path).to eq(question_path(question))
+    expect(current_path).to eq(question_path(@question))
   end
 
 end
@@ -196,6 +213,7 @@ feature "Deleting a Question", %(
   scenario "delete from edit page", %(
     [X] I must be able delete a question from the question edit page
   ) do
+    login
     question = FactoryGirl.create(:question)
     visit edit_question_path(question)
     click_link "Delete"
@@ -208,6 +226,7 @@ feature "Deleting a Question", %(
   scenario "delete from details page", %(
     [X] I must be able delete a question from the question details page
   ) do
+    login
     question = FactoryGirl.create(:question)
     visit question_path(question)
     click_link "Delete"
@@ -219,6 +238,7 @@ feature "Deleting a Question", %(
   scenario "check that answers are also deleted", %(
     [X] All answers associated with the question must also be deleted
   ) do
+    login
     question = FactoryGirl.create(:question)
     answers = []
     5.times do
