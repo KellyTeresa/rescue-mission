@@ -11,9 +11,10 @@ feature "View All Questions", %(
 ) do
 
   scenario "Navigate to questions from root" do
+    question = FactoryGirl.create(:question)
     visit '/'
 
-    expect(page).to have_content("Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?")
+    expect(page).to have_content(question.title)
   end
 
 end
@@ -24,18 +25,19 @@ feature "View a Question's Details", %(
   So that I can effectively understand the question
 
   Acceptance Criteria
-  [ ] I must be able to get to this page from the questions index
-  [ ] I must see the question's title
-  [ ] I must see the question's description
+  [X] I must be able to get to this page from the questions index
+  [X] I must see the question's title
+  [X] I must see the question's description
 ) do
 
   scenario "Click on first question" do
+    question = FactoryGirl.create(:question)
     visit '/'
-    click_link "Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?"
+    click_link question.title
 
-    expect(page).to have_content("Gingerbread candy cake gummi bears pastry sugar plum chupa chups gummies. Sesame snaps caramels lollipop bonbon?")
-    expect(page).to have_content("Candy canes soufflé tootsie roll tart danish cupcake chocolate bar.")
-    expect(current_path).to eq(question_path(5))
+    expect(page).to have_content(question.title)
+    expect(page).to have_content(question.description)
+    expect(current_path).to eq(question_path(question))
   end
 end
 
@@ -46,75 +48,191 @@ feature "Post a question" do
     So that I can receive help from others
 
     Acceptance Criteria
-    [ ] I must provide a title that is at least 40 characters long
-    [ ] I must provide a description that is at least 150 characters long
+    [X] I must provide a title that is at least 40 characters long
+    [X] I must provide a description that is at least 150 characters long
   ) do
     question = FactoryGirl.build(:question)
 
-    visit new_question_path
+    visit '/'
+    click_link "Ask a Question"
     fill_in("Title", with: question.title)
     fill_in("Description", with: question.description)
     click_button "Submit Question"
 
     expect(page).to have_content(question.title)
     expect(page).to have_content(question.description)
-    # expect(page).to have_content("Question submitted!")
+    expect(page).to have_content("Question submitted!")
   end
 
-  pending "Invalid Question", %(
-    [ ] I must be presented with errors if I fill out the form incorrectly
-    )
+  scenario "Invalid Question", %(
+    [X] I must be presented with errors if I fill out the form incorrectly
+    ) do
+      visit '/'
+      click_link "Ask a Question"
+      fill_in("Title", with: "Fish")
+      click_button "Submit Question"
+
+      expect(page).to have_content "Invalid input"
+    end
 end
 
-feature "Pending Features" do
-
-
-
-
-  pending "Answering a Question", %(
+feature "Answering a Question" do
+  scenario "valid answer", %(
     As a user
     I want to answer another user's question
     So that I can help them solve their problem
 
     Acceptance Criteria
-    [ ] I must be on the question detail page
-    [ ] I must provide a description that is at least 50 characters long
-    )
+    [X] I must be on the question detail page
+    [X] I must provide a description that is at least 50 characters long
+  ) do
+    question = FactoryGirl.create(:question)
+    answer = FactoryGirl.build(:answer)
+    visit '/'
+    click_link question.title
+    click_link "Submit Answer"
+    fill_in("Description", with: answer.description)
+    click_button "Add Answer"
 
-  pending "Incorrectly filling out answer form", %(
-    [ ] I must be presented with errors if I fill out the form incorrectly
-    )
+    expect(page).to have_content(question.title)
+    expect(page).to have_content(question.description)
+    expect(page).to have_content(answer.description)
+  end
 
-  pending "Viewing a Question's Answers", %(
-    As a user
-    I want to view the answers for a question
-    So that I can learn from the answer
 
-    Acceptance Criteria
-    [ ] I must be on the question detail page
-    [ ] I must only see answers to the question I'm viewing
-    [ ] I must see all answers listed in order, most recent last
-    )
+  scenario "Incorrectly filling out answer form", %(
+    [X] I must be presented with errors if I fill out the form incorrectly
+    ) do
+      question = FactoryGirl.create(:question)
+      visit '/'
+      click_link question.title
+      click_link "Submit Answer"
+      click_button "Add Answer"
 
-  pending "Editing a Question", %(
+      expect(page).to have_content "Invalid input"
+    end
+end
+
+feature "Editing a Question" do
+  scenario "valid information", %(
     As a user
     I want to edit a question
     So that I can correct any mistakes or add updates
 
     Acceptance Criteria
-    [ ] I must provide valid information
-    [ ] I must be presented with errors if I fill out the form incorrectly
-    [ ] I must be able to get to the edit page from the question details page
-    )
+    [X] I must provide valid information
+    [X] I must be able to get to the edit page from the question details page
 
-  pending "Deleting a Question", %(
+  ) do
+    question = FactoryGirl.create(:question)
+    edited_info = FactoryGirl.build(:question)
+    visit '/'
+    click_link question.title
+    click_link "Edit Question"
+    fill_in("Description", with: edited_info.description)
+
+    click_button "Submit Question"
+
+    expect(page).to have_content(question.title)
+    expect(page).to have_content(edited_info.description)
+  end
+
+  scenario "not valid information", %(
+    [X] I must be presented with errors if I fill out the form incorrectly
+  ) do
+    question = FactoryGirl.create(:question)
+    visit '/'
+    click_link question.title
+    click_link "Edit Question"
+    fill_in("Title", with: "Fish")
+    click_button "Submit Question"
+
+    expect(page).to have_content "Invalid input"
+  end
+
+end
+
+feature "Viewing a Question's Answers" do
+
+  scenario "look at a question", %(
     As a user
-    I want to delete a question
-    So that I can delete duplicate questions
+    I want to view the answers for a question
+    So that I can learn from the answer
 
     Acceptance Criteria
-    [ ] I must be able delete a question from the question edit page
-    [ ] I must be able delete a question from the question details page
-    [ ] All answers associated with the question must also be deleted
-    )
+    [X] I must be on the question detail page
+    [X] I must only see answers to the question I'm viewing
+    [X] I must see all answers listed in order, most recent last
+  ) do
+    question = FactoryGirl.create(:question)
+    answers = []
+    5.times do
+      answer = FactoryGirl.build(:answer)
+      answer.question_id = question.id
+      answer.save
+      answers << answer
+    end
+    other_answer = Answer.create(question_id: 300, description: "Fruitcake apple pie muffin cupcake lollipop croissant wafer carrot cake powder. Jelly soufflé candy chocolate cake tootsie roll tiramisu sweet roll gummi bears topping. Chupa chups pudding chocolate ice cream brownie biscuit cookie cotton candy.")
+
+
+    visit '/'
+    click_link question.title
+
+    expect(page).to have_content(answers[0].description)
+    expect(page).to have_content(answers[1].description)
+    expect(page).to have_content(answers[2].description)
+    expect(page).to have_content(answers[3].description)
+    expect(page).to have_content(answers[4].description)
+    expect(page).to_not have_content(other_answer.description)
+    expect(current_path).to eq(question_path(question))
+  end
+
+end
+
+feature "Deleting a Question", %(
+  As a user
+  I want to delete a question
+  So that I can delete duplicate questions
+) do
+
+  scenario "delete from edit page", %(
+    [X] I must be able delete a question from the question edit page
+  ) do
+    question = FactoryGirl.create(:question)
+    visit edit_question_path(question)
+    click_link "Delete"
+
+    expect(current_path).to eq(questions_path)
+    expect(page).to_not have_content(question.title)
+
+  end
+
+  scenario "delete from details page", %(
+    [X] I must be able delete a question from the question details page
+  ) do
+    question = FactoryGirl.create(:question)
+    visit question_path(question)
+    click_link "Delete"
+
+    expect(current_path).to eq(questions_path)
+    expect(page).to_not have_content(question.title)
+  end
+
+  scenario "check that answers are also deleted", %(
+    [X] All answers associated with the question must also be deleted
+  ) do
+    question = FactoryGirl.create(:question)
+    answers = []
+    5.times do
+      answer = FactoryGirl.build(:answer)
+      answer.question_id = question.id
+      answers << answer.save
+    end
+
+    visit question_path(question)
+    click_link "Delete"
+
+    expect(Answer.where(question: question)).to be_empty
+  end
+
 end
