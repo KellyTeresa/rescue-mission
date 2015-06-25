@@ -12,11 +12,15 @@
     <% else %>
       <ul>
         <% @answers.each do |answer| %>
-          <%= answer.description %>
+          <li><%= answer.description %></li>
         <%- end -%>
       </ul>
     <%- end -%>
-    <h3><%= link_to "Submit Answer", new_question_answer_path(@question.id) %></h3>
+    <h3>Submit Answer</h3>
+
+    <%= render 'answers/form' %>
+
+
   </div>
 
   <div class="small-3 columns">

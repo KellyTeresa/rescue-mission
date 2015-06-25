@@ -1,7 +1,7 @@
 class Question < ActiveRecord::Base
   has_many :answers, inverse_of: :question
 
-  validates :title, presence: true, length: { minimum: 40 }
-  validates :description, presence: true, length: { minimum: 150 }
+  validates :title, presence: true, length: { in: 2..100 }
+  validates :description, presence: true, length: { in: 2..300 }
 
 end

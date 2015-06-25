@@ -3,13 +3,13 @@ require 'faker'
 
 FactoryGirl.define do
   factory :question do
-    sequence(:title) {|n| "#{n}: Cupcake ipsum dolor sit amet apple pie carrot cake."}
-    description Faker::Lorem.paragraph(8)
+    sequence(:title) {|n| "#{n}: Cupcake ipsum dolor sit amet."}
+    description Faker::Lorem.paragraph(3)
   end
 
   factory :answer do
     question_id nil
-    description Faker::Lorem.paragraph(5)
+    description Faker::Lorem.paragraph(2)
   end
 
 end
