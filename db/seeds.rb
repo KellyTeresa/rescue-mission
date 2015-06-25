@@ -5,11 +5,18 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
-require 'faker'
 
 user = FactoryGirl.create(:user)
 questions = []
 
 5.times do
-  questions << Question.create(title: Faker::Lorem.sentence, description: Faker::Lorem.paragraph(3), user: user)
+  questions << FactoryGirl.create(:question, user: user)
+end
+
+helper = FactoryGirl.create(:user)
+
+questions.each do |question|
+  2.times do
+    FactoryGirl.create(:answer, question: question, user: helper)
+  end
 end
