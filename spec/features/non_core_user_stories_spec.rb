@@ -7,7 +7,7 @@ feature "Markdown Support", %(
 ) do
 
   pending "user adds markdown to question", %(
-    [ ] I can write my questionsusing markdown syntax
+    [ ] I can write my questions using markdown syntax
     [ ] Questions, when shown, should be the HTML rendered from the
     markdown
   )
@@ -25,12 +25,37 @@ feature "Choosing an Answer", %(
   I want to mark an answer as the best answer
   So that others can quickly find the answer
 ) do
+  scenario "look at available answers" do
+    @question = FactoryGirl.create(:question)
+    @one_answer = FactoryGirl.create(:answer, question: @question)
+    @other_answer = FactoryGirl.create(:answer, question: @question)
 
-  pending "mark an answer as best", %(
+    visit '/'
+    click_link @question.title
+
+    expect(page).to have_content "No Chosen Answer"
+    expect(page).to have_content @one_answer.description
+    expect(page).to have_content @other_answer.description
+  end
+
+  scenario "mark an answer as best", %(
     [ ] I must be on the question detail page
     [ ] I must be able mark an answer as the best
     [ ] I must see the "best" answer above all other answers in the answer list
-  )
+  ) do
+    @asker = FactoryGirl.create(:user)
+    @helpful = FactoryGirl.create(:user)
+    @question = FactoryGirl.create(:question, user: @asker)
+    @answer_to_choose = FactoryGirl.create(:answer, question: @question, user: @helpful)
+
+    visit '/'
+    click_link @question.title
+    within("#answer_id_#{@answer_to_choose.id}") do
+      click_link "Accept Answer"
+    end
+
+    expect(page).to have_content "Chosen Answer! #{@answer_to_choose.description}"
+  end
 end
 
 feature "User Authentication", %(

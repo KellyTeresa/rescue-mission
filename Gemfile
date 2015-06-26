@@ -53,3 +53,6 @@ gem 'shoulda-matchers', group: [:development, :test], require: false
 gem 'devise'
 gem 'foundation-rails'
 gem 'database_cleaner', group: :test
+gem 'omniauth'
+gem 'omniauth-github'
+gem 'dotenv-rails', :groups => [:development, :test]

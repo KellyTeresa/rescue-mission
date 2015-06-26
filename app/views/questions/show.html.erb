@@ -2,30 +2,60 @@
   <div class="small-9 columns">
 
     <h1><%= @question.title %></h1>
+    <h5>Posted by <%= @question.user.email %></h5>
+
     <p>
       <%= @question.description %>
     </p>
-
-    <h3>Answers</h3>
-    <% if @answers.length == 0 %>
-      <p>There are no answers yet.</p>
-    <% else %>
-      <ul>
-        <% @answers.each do |answer| %>
-          <li><%= answer.description %></li>
-        <%- end -%>
-      </ul>
-    <%- end -%>
-    <h3>Submit Answer</h3>
-
-    <%= render 'answers/form' %>
-
-
   </div>
 
   <div class="small-3 columns">
     <h3><%= link_to "Edit Question", edit_question_path(@question) %></h3>
     <h3><%= link_to "Delete", question_path, method: :delete, data: {confirm: "Are you sure?"} %></h3>
+  </div>
+
+
+</div>
+
+<div class="row">
+  <div class="small-12 columns">
+
+    <h3>Answers</h3>
+
+    <% if @answers.length == 0 && @best_answer.nil? %>
+      <p>There are no answers yet.</p>
+    <% else %>
+      <% if @best_answer.nil? %>
+        <div>
+          <h6>No Chosen Answer</h6>
+        </div>
+      <% else %>
+        <div class="best">
+          <h6>Chosen Answer!</h6>
+          <p>
+            <%= @best_answer.description %>
+          </p>
+          <h7>- <%= @best_answer.user.email %></h7>
+        </div>
+      <%- end -%>
+      <div class="answers">
+        <% @answers.each do |answer| %>
+          <div id="answer_id_<%= answer.id %>">
+            <p><%= answer.description %></p>
+            <h7>- <%= answer.user.email %></h7>
+            <% if @best_answer.nil? %>
+              <p class="accept">
+                <%= link_to "Accept Answer", edit_answer_path(answer) %>
+              </p>
+            <%- end -%>
+          </div>
+        <%- end -%>
+      </div>
+    <%- end -%>
+
+    <h3>Submit Answer</h3>
+
+    <%= render 'answers/form' %>
 
   </div>
 </div>
